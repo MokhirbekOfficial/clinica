@@ -1,4 +1,5 @@
-const { addUsers, getUsers} = require('./model')
+const { addUsers, getUsers, addOrder} = require('./model')
+const {getAdminId} = require('../admin/model')
 const secret_key = 'CLINICS'
 const jwt = require('jsonwebtoken')
 
@@ -20,9 +21,9 @@ module.exports = {
             let allUsers = await getUsers()
             for(let i=0; i<allUsers.length; i++){
                 if((allUsers[i].user_name == user_name) && (allUsers[i].user_password == user_password)){
-                    let userName = allUsers[i].user_name
-                    let userGmail = allUsers[i].user_gmail
-                    const token = jwt.sign({userName, userGmail}, secret_key)
+                    let user_name = allUsers[i].user_name
+                    let user_gmail = allUsers[i].user_gmail
+                    const token = jwt.sign({user_name, user_gmail}, secret_key)
                     let obj = {
                         token: token,
                         isAdmin: allUsers[i].is_admin
@@ -31,6 +32,18 @@ module.exports = {
                 }
             }
             res.json('false')
+        }catch(e){
+            console.log(e.message)
+            res.json(false)
+        }
+    },
+    addOrder: async (req, res) => {
+        try{
+            let {service_id, token} = req.body
+            const decoded = jwt.verify(token, secret_key)
+            let foundId = await getAdminId(decoded.user_name)
+            await addOrder(service_id, foundId.user_id)
+            res.json("ok")
         }catch(e){
             console.log(e.message)
             res.json(false)

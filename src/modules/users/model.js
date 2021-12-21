@@ -14,10 +14,20 @@ FROM
     users
 `
 
+const AddOrder = `
+INSERT INTO orders
+    (order_service, order_owner)
+VALUES
+    ($1,$2)
+`
+
 const addUsers = (user_name, user_password,user_gmail,user_tel,is_admin) => fetch(AddUsers,user_name, user_password,user_gmail,user_tel,is_admin)
 
 const getUsers = () => fetchAll(GetUsers)
+
+const addOrder = (order_service, order_owner) => fetch(AddOrder,order_service,order_owner)
 module.exports = {
     addUsers,
-    getUsers
+    getUsers,
+    addOrder
 }
