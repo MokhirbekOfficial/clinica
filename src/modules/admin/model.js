@@ -29,11 +29,49 @@ FROM
 WHERE
     user_name = $1
 `
-const getOrders = () => fetchAll(GetOrders)
+const GetAdminClinics = `
+SELECT 
+    clinic_id,
+    clinic_name
+FROM
+    clinics
+WHERE
+    clinic_admin = $1
+`
+const AddServices = `
+INSERT INTO services
+    (service_title,service_img,doctor_name,doctor_tel,ref_clinic)
+VALUES 
+    ($1,$2,$3,$4,$5)
+`
+const GetAdminServices = `
+SELECT
+    *
+FROM
+    services
+WHERE
+    ref_clinic = $1
+`
+const DeleteService = `
+DELETE
+FROM
+    services
+WHERE
+    service_id = $1
+`
 
+const getOrders = () => fetchAll(GetOrders)
 const getAdminId = (user_name)=> fetch(getAdmin, user_name)
+const getAdminClinics = (clinic_admin)=> fetchAll(GetAdminClinics, clinic_admin)
+const addServices = (service_title,service_img,doctor_name,doctor_tel,ref_clinic)=> fetch(AddServices, service_title,service_img,doctor_name,doctor_tel,ref_clinic)
+const getAdminService = (ref_clinic)=> fetchAll(GetAdminServices, ref_clinic)
+const deleteService = (service_id)=> fetch(DeleteService, service_id)
 
 module.exports = {
     getOrders,
-    getAdminId
+    getAdminId,
+    getAdminClinics,
+    addServices,
+    getAdminService,
+    deleteService
 }
